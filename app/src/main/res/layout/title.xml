@@ -6,8 +6,7 @@
     android:paddingTop="30dp"
     android:orientation="horizontal">
         <TextView
-            android:id="@+id/local_top"
-            android:text="长安区"
+            android:id="@+id/current_position"
             android:textSize="30sp"
             android:paddingLeft="100dp"
             android:paddingBottom="15dp"
