@@ -1,7 +1,5 @@
 package com.example.weatheractivity;
 
-import static com.example.weatheractivity.util.Utility.handleWeatherResponse;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -12,10 +10,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -27,8 +23,10 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.example.weatheractivity.adapter.WeatherAdapter;
 import com.example.weatheractivity.bean.SevenWeather;
 import com.example.weatheractivity.bean.Weather;
+import com.example.weatheractivity.util.FormatDate;
 import com.example.weatheractivity.util.HttpUtil;
 import com.example.weatheractivity.util.Utility;
 
@@ -38,8 +36,6 @@ import java.util.List;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecycleView;
     private RecyclerView.LayoutManager mLayoutManager;
     private List<WeatherItem> weatherItems;
-    private  MyAdapter mAdapter;
+    private WeatherAdapter mAdapter;
 
     public TextView positionText;
     private TextView currentTemperature;
@@ -73,25 +69,35 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bindView();
+        /**
+         * 定位当前城市
+         */
+        LocationClient.setAgreePrivacy(true);
+        try {
+//            声明LocationClient类实例
+            mLocationClient=new LocationClient(getApplicationContext());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+//        注册监听函数：当获取到位置信息的时候就会回调这个定位监听器
+        myListener=new MLocationListener();
+        mLocationClient.registerLocationListener(myListener);
+        applyPermissions();
         weatherItems=new ArrayList<>();
         mRecycleView.setHasFixedSize(true);
-        mAdapter=new MyAdapter(weatherItems);
+        mAdapter=new WeatherAdapter(weatherItems);
         mRecycleView.setAdapter(mAdapter);
         mLayoutManager=new LinearLayoutManager(this);
         mRecycleView.setLayoutManager(mLayoutManager);
         DividerItemDecoration itemDecoration=new DividerItemDecoration(this,DividerItemDecoration.VERTICAL);
         mRecycleView.addItemDecoration(itemDecoration);
-        /**
-         * 定位服务
-         */
-        initLocation();
-        applyPermissions();
 
         /**
          * 展示天气
          */
             String locationId="101010100";
             requestWeatherWithOkHttp(locationId);
+            Log.d(TAG,"请求七天");
             requestSevenWeatherWithOkHttp(locationId);
     }
 
@@ -108,9 +114,11 @@ public class MainActivity extends AppCompatActivity {
      */
     private void showWeatherInfo(Weather weather){
 //        顶部当前时间当前定位天气信息
-        currentTemperature.setText("当前温度："+weather.getNow().getTemperature());
-        currentWeatherText.setText("天气："+weather.getNow().getText());
-        updateTime.setText("更新于:"+weather.getUpdateTime());
+        currentTemperature.setText(weather.getNow().getTemperature());
+        currentWeatherText.setText(weather.getNow().getText());
+        String time=FormatDate.updateTime(weather.getUpdateTime());
+//        updateTime.setText("更新于:"+weather.getUpdateTime());
+        updateTime.setText(String.format("最新更新时间：%s%s", FormatDate.showTimeInfo(time),time));
     }
      private  void showSevenWeatherInfo(SevenWeather sevenWeather){
          for (int i = 0; i <7 ; i++) {
@@ -122,52 +130,30 @@ public class MainActivity extends AppCompatActivity {
              weatherItems.add(weatherItem);
          }
      }
-//     private void setWeatherItem(){
-//         weatherItems=new ArrayList<>();
-//         for (int i = 0; i <20 ; i++) {
-//             WeatherItem weatherItem=new WeatherItem();
-//             weatherItem.setDate("3月"+i+"日");
-//             weatherItem.setWeather("晴朗");
-//             weatherItem.setMaxTemp("20");
-//             weatherItem.setMinTemp("3");
-//             weatherItems.add(weatherItem);
-//         }
-//        }
-
 
     /**
-     * 定位相关部分：初始化位置
+     * 定位相关部分：sdk设置
      *
      * @return
      */
 
     private void initLocation(){
-        try {
-    //  声明LocationClient类
-           LocationClient.setAgreePrivacy(true);
-            mLocationClient=new LocationClient(getApplicationContext());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        if (mLocationClient!=null){
-            // 注册监听函数：当获取到位置信息的时候就会回调这个定位监听器
-            myListener=new MLocationListener();
-            mLocationClient.registerLocationListener(myListener);
             LocationClientOption option=new LocationClientOption();
 //            设置每5秒更新一次位置信息
 //            option.setScanSpan(5000);
             option.setLocationMode(LocationClientOption.LocationMode.Device_Sensors);
             option.setIsNeedAddress(true);
             mLocationClient.setLocOption(option);
-        }
     }
 
     /**
-     * 权限申请
+     * 权限申请：运行时一次性申请三个权限
      */
 
     private void applyPermissions(){
         List<String> permissionList=new ArrayList<>();
+//        ContextCompat.checkSelfPermission()：此方法返回 PERMISSION_GRANTED 或PERMISSION_DENIED，具体取决于您的应用是否具有权限，用于检测用户是否授权了某个权限。
+//        PackageManager.PERMISSION_GRANTED 表示授权成功
         if (ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
             permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
         }
@@ -181,26 +167,11 @@ public class MainActivity extends AppCompatActivity {
             String [] permissions=permissionList.toArray(new String[permissionList.size()]);
             ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
         }else {
-            Log.d(TAG,"开始定位");
             startLocation();
         }
     }
-
-    private  void startLocation(){
-        mLocationClient.start();
-        Log.d(TAG,"start方法启动");
-    }
-
-
     /**
-     *
-     * @param requestCode The request code
-     * android.app.Activity, String[], int)}
-     * @param permissions The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     *     which is either {@link android.content.pm.PackageManager#PERMISSION_GRANTED}
-     *     or {@link android.content.pm.PackageManager#PERMISSION_DENIED}. Never null.
-     *
+     * 何时调用：当用户响应系统权限对话框后，系统就会调用应用的 onRequestPermissionsResult() 实现。系统会传入用户对权限对话框的响应以及您定义的请求代码，
      *  该方法主要用于对申请的权限进行判断，如果有任何一个权限被用户拒绝，直接调用finish关闭当前程序，只有所有权限都被用户同意了，才会开始地理位置定位
      */
     @Override
@@ -227,11 +198,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private  void startLocation(){
+        initLocation();
+        mLocationClient.start();
+        Log.d(TAG,"start方法启动");
+    }
+
     /**
      * 接下来为获取天气数据部分
      */
-
-
     private  void requestWeatherWithOkHttp( String locationId){
         String weatherUrl="https://devapi.qweather.com/v7/weather/now?key=a2e84fe1310d4f79bc79ffe24d70fa2b&location="+locationId;
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
@@ -280,6 +255,7 @@ public class MainActivity extends AppCompatActivity {
                     public void run() {
                         if ( "200".equals(sevenWeather.getCode())){
                             showSevenWeatherInfo(sevenWeather);
+                            Log.d(TAG,"七天数据展示完成");
                         }else {
                             Toast.makeText(MainActivity.this,"获取七天天气信息失败",Toast.LENGTH_SHORT).show();
                         }
@@ -330,7 +306,7 @@ public class MainActivity extends AppCompatActivity {
         mLocationClient.stop();
     }
 
-    private  class MLocationListener extends BDAbstractLocationListener{
+    private  class MLocationListener extends BDAbstractLocationListener {
 
         @Override
         public void onReceiveLocation(BDLocation bdLocation) {
@@ -341,7 +317,7 @@ public class MainActivity extends AppCompatActivity {
 //            currentPosition.append("省：").append(bdLocation.getProvince()).append("\n");
 //            currentPosition.append("市：").append(bdLocation.getCity()).append("\n");
 //            currentPosition.append("区：").append(bdLocation.getDistrict()).append("\n");
-            currentPosition.append("街道：").append(bdLocation.getStreet()).append("\n");
+            currentPosition.append(bdLocation.getStreet()).append("\n");
 //            currentPosition.append("定位方式：");
 //            if (bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
 //                currentPosition.append("GPS");

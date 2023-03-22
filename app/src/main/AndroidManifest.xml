@@ -3,8 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
 
-    <uses-permission android:name="android.permission.WRITE_SETTINGS"
-        tools:ignore="ProtectedPermissions" />
     <!-- 该权限用于网络定位-->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <!-- 这个权限用于访问系统接口提供的卫星定位信息-->
@@ -15,14 +13,13 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位-->
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据-->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <!-- 访问网络，网络定位需要上网-->
-<uses-permission android:name="android.permission.INTERNET"/>
-<uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"
-    tools:ignore="ProtectedPermissions" />
-<uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+
 
 <application
     android:allowBackup="true"

@@ -1,4 +1,4 @@
-package com.example.weatheractivity;
+package com.example.weatheractivity.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,10 +8,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.weatheractivity.R;
+import com.example.weatheractivity.WeatherItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
+public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.MyViewHolder> {
 
     public List<WeatherItem>  weatherItems=new ArrayList<>();
 
@@ -31,7 +34,7 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.MyViewHolder> {
         }
     }
 
-    public MyAdapter(List<WeatherItem> weatherItems){
+    public WeatherAdapter(List<WeatherItem> weatherItems){
         this.weatherItems=weatherItems;
     }
 
