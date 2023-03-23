@@ -1,17 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="40dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="6dp"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp"
-    android:elevation="5dp">
-    <TextView
-        android:background="#DDCFCF"
-        android:id="@+id/city_text"
-        android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="6dp">
+    <androidx.cardview.widget.CardView
+        android:background="#DAC9C9"
+        android:id="@+id/city_item_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:layout_margin="3dp"
+        app:contentPadding="10dp"
+        app:cardCornerRadius="10dp"
+        android:elevation="5dp">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/tv_item_city"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textSize="24sp"
+            android:text="西安"/>
+        <TextView
+            android:id="@+id/tv_item_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:textSize="18sp"
+            android:paddingTop="30dp"
+            android:paddingBottom="10dp"
+            android:layout_below="@+id/tv_item_city"
+            android:text="阴"/>
+        <TextView
+            android:id="@+id/tv_item_now_weather"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:textSize="24sp"
+            android:text="8℃"/>
+        <TextView
+            android:id="@+id/tv_item_max_min_temp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="30dp"
+            android:paddingBottom="10dp"
+            android:layout_marginRight="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/tv_item_now_weather"
+            android:textSize="18sp"
+            android:text="最高8℃/最低4℃"/>
+    </RelativeLayout>
+    </androidx.cardview.widget.CardView>
 
-</androidx.cardview.widget.CardView>
+</LinearLayout>

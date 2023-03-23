@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 
 import android.Manifest;
 import android.content.Intent;
@@ -16,6 +17,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,8 +27,10 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.example.weatheractivity.adapter.WeatherAdapter;
+import com.example.weatheractivity.adapter.WeatherFragmentAdapter;
 import com.example.weatheractivity.bean.SevenWeather;
 import com.example.weatheractivity.bean.Weather;
+import com.example.weatheractivity.db.DBManager;
 import com.example.weatheractivity.util.FormatDate;
 import com.example.weatheractivity.util.HttpUtil;
 import com.example.weatheractivity.util.Utility;
@@ -38,23 +43,26 @@ import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
 //   LocationClient类必须在主线程中声明，需要Context参数
     public LocationClient mLocationClient;
 
     public MLocationListener myListener;
-    private RecyclerView mRecycleView;
-    private RecyclerView.LayoutManager mLayoutManager;
-    private List<WeatherItem> weatherItems;
-    private WeatherAdapter mAdapter;
+    private ViewPager myViewPager;
+//    ViewPager数据源
+    private List<WeatherFragment> fragmentList;
+//    城市列表,选中的城市的集合
+    private  List<String > cityList;
+//    表示页数
+    private  List<ImageView> imgList;
+    private WeatherFragmentAdapter myWfAdapter;
 
     public TextView positionText;
-    private TextView currentTemperature;
-    private  TextView currentWeatherText;
-    private  TextView updateTime;
+    private ImageView imManagerCity;
+    public  String district;
 
-    public  String TAG="WeatherDemo";
+    public   String TAG="WeatherDemo";
 
     public TextView getPositionText() {
         return positionText;
@@ -68,68 +76,54 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        bindView();
+//        positionText=findViewById(R.id.)
+//        设置监听事件
+        imManagerCity=findViewById(R.id.manager_city);
+        imManagerCity.setOnClickListener(this);
+        myViewPager=findViewById(R.id.view_pager);
+
         /**
          * 定位当前城市
          */
         LocationClient.setAgreePrivacy(true);
         try {
 //            声明LocationClient类实例
-            mLocationClient=new LocationClient(getApplicationContext());
+            mLocationClient = new LocationClient(getApplicationContext());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
 //        注册监听函数：当获取到位置信息的时候就会回调这个定位监听器
-        myListener=new MLocationListener();
+        myListener = new MLocationListener();
         mLocationClient.registerLocationListener(myListener);
         applyPermissions();
-        weatherItems=new ArrayList<>();
-        mRecycleView.setHasFixedSize(true);
-        mAdapter=new WeatherAdapter(weatherItems);
-        mRecycleView.setAdapter(mAdapter);
-        mLayoutManager=new LinearLayoutManager(this);
-        mRecycleView.setLayoutManager(mLayoutManager);
-        DividerItemDecoration itemDecoration=new DividerItemDecoration(this,DividerItemDecoration.VERTICAL);
-        mRecycleView.addItemDecoration(itemDecoration);
-
-        /**
-         * 展示天气
-         */
-            String locationId="101010100";
-            requestWeatherWithOkHttp(locationId);
-            Log.d(TAG,"请求七天");
-            requestSevenWeatherWithOkHttp(locationId);
+//        ViewPager添加fragment数据
+        fragmentList=new ArrayList<>();
+//        cityList=new ArrayList<>();
+        cityList= DBManager.queryAllCityName();
+        imgList=new ArrayList<>();
+        if (cityList.size()==0){
+            cityList.add("101010100");
+            cityList.add("101010200");
+        }
+        initViewPager();
+        myWfAdapter=new WeatherFragmentAdapter(getSupportFragmentManager(),fragmentList);
+//        初始化ViewPager页面
+        myViewPager.setAdapter(myWfAdapter);
+//        创建页面指示原点
     }
 
-    private void bindView() {
-        positionText=findViewById(R.id.current_position);
-        mRecycleView=findViewById(R.id.weather_recycle);
-        currentTemperature=findViewById(R.id.current_temperature);
-        currentWeatherText=findViewById(R.id.current_weather_text);
-        updateTime=findViewById(R.id.update_time);
-    }
 
-    /**
-     *将天气信息展示到界面上
-     */
-    private void showWeatherInfo(Weather weather){
-//        顶部当前时间当前定位天气信息
-        currentTemperature.setText(weather.getNow().getTemperature());
-        currentWeatherText.setText(weather.getNow().getText());
-        String time=FormatDate.updateTime(weather.getUpdateTime());
-//        updateTime.setText("更新于:"+weather.getUpdateTime());
-        updateTime.setText(String.format("最新更新时间：%s%s", FormatDate.showTimeInfo(time),time));
+    private void initViewPager(){
+//        创建Fragment对象添加到集合
+        for( int i=0;i<cityList.size();i++){
+            WeatherFragment weatherFragment=new WeatherFragment();
+            Bundle bundle=new Bundle();
+            bundle.putString("city",cityList.get(i));
+            bundle.putString("currentCity",district);
+            weatherFragment.setArguments(bundle);
+            fragmentList.add(weatherFragment);
+        }
     }
-     private  void showSevenWeatherInfo(SevenWeather sevenWeather){
-         for (int i = 0; i <7 ; i++) {
-             WeatherItem weatherItem=new WeatherItem();
-             weatherItem.setDate(sevenWeather.getDaily().get(i).getFxDate());
-             weatherItem.setWeather(sevenWeather.getDaily().get(i).getTextDay());
-             weatherItem.setMaxTemp(sevenWeather.getDaily().get(i).getTempMax());
-             weatherItem.setMinTemp(sevenWeather.getDaily().get(i).getTempMin());
-             weatherItems.add(weatherItem);
-         }
-     }
 
     /**
      * 定位相关部分：sdk设置
@@ -207,74 +201,6 @@ public class MainActivity extends AppCompatActivity {
     /**
      * 接下来为获取天气数据部分
      */
-    private  void requestWeatherWithOkHttp( String locationId){
-        String weatherUrl="https://devapi.qweather.com/v7/weather/now?key=a2e84fe1310d4f79bc79ffe24d70fa2b&location="+locationId;
-        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseData=response.body().string();
-                final  Weather weather= Utility.handleWeatherResponse(responseData);
-                Log.d(TAG,responseData);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if ( "200".equals(weather.getCode())){
-                            showWeatherInfo(weather);
-                        }else {
-                            Toast.makeText(MainActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-        });
-    }
-    private  void requestSevenWeatherWithOkHttp( String locationId){
-        String weatherUrl="https://devapi.qweather.com/v7/weather/7d?key=a2e84fe1310d4f79bc79ffe24d70fa2b&location="+locationId;
-        HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
-
-            @Override
-            public void onResponse(Call call, Response response) throws IOException {
-                final String responseData=response.body().string();
-                final SevenWeather  sevenWeather= Utility.handleSevenWeatherResponse(responseData);
-                Log.d(TAG,responseData);
-                Log.d(TAG, sevenWeather.getDaily().get(0).getTextDay());
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        if ( "200".equals(sevenWeather.getCode())){
-                            showSevenWeatherInfo(sevenWeather);
-                            Log.d(TAG,"七天数据展示完成");
-                        }else {
-                            Toast.makeText(MainActivity.this,"获取七天天气信息失败",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-            @Override
-            public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this,"获取七天天气信息失败",Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
-
-        });
-    }
 
     /**
      * 以下为设置图标部分
@@ -291,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this,"分享",Toast.LENGTH_LONG).show();
                 return  true;
             case R.id.item_manager:
-                Intent intent=new Intent(MainActivity.this,ManagerCityActivity.class);
+                Intent intent=new Intent(MainActivity.this,CityManagerActivity.class);
                 startActivity(intent);
 
                 return  true;
@@ -303,30 +229,23 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mLocationClient.stop();
+//        mLocationClient.stop();
     }
 
-    private  class MLocationListener extends BDAbstractLocationListener {
-
-        @Override
-        public void onReceiveLocation(BDLocation bdLocation) {
-            StringBuilder currentPosition = new StringBuilder();
-//            currentPosition.append("纬度：").append(bdLocation.getLatitude()).append("\n");
-//            currentPosition.append("经度：").append(bdLocation.getLongitude()).append("\n");
-//            currentPosition.append("国家：").append(bdLocation.getCountry()).append("\n");
-//            currentPosition.append("省：").append(bdLocation.getProvince()).append("\n");
-//            currentPosition.append("市：").append(bdLocation.getCity()).append("\n");
-//            currentPosition.append("区：").append(bdLocation.getDistrict()).append("\n");
-            currentPosition.append(bdLocation.getStreet()).append("\n");
-//            currentPosition.append("定位方式：");
-//            if (bdLocation.getLocType() == BDLocation.TypeGpsLocation) {
-//                currentPosition.append("GPS");
-//            } else if (bdLocation.getLocType() == BDLocation.TypeNetWorkLocation) {
-//                currentPosition.append("网络");
-//            }
-            positionText.setText(currentPosition);
-            Log.d("WeatherDemo", String.valueOf(currentPosition));
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.manager_city:
+                Intent intent=new Intent(MainActivity.this,CityManagerActivity.class);
+                startActivity(intent);
         }
     }
 
+    private  class MLocationListener extends BDAbstractLocationListener {
+        @Override
+        public void onReceiveLocation(BDLocation bdLocation) {
+           district=bdLocation.getDistrict();
+            Log.d(TAG, district);
+        }
+    }
 }
