@@ -36,6 +36,9 @@ public class CityManagerAdapter extends BaseAdapter {
         return i;
     }
 
+
+
+
     @Override
     public View getView(int i, View view, ViewGroup viewGroup) {
         ViewHolder holder =null;
@@ -52,8 +55,8 @@ public class CityManagerAdapter extends BaseAdapter {
         SevenWeather weather=Utility.handleSevenWeatherResponse(bean.getContent());
         holder.cityText.setText(weather.getDaily().get(0).getTextDay());
 //        TODO：当前温度设置
-        holder.cityNowTemp.setText("当前温度");
-        holder.cityMaxMinTemp.setText("最高温度"+weather.getDaily().get(0).getTempMax()+"/"+"最低温度"+weather.getDaily().get(0).getTempMin());
+        holder.cityNowTemp.setText("最高"+weather.getDaily().get(0).getTempMax()+"℃");
+        holder.cityMaxMinTemp.setText("最低"+weather.getDaily().get(0).getTempMin()+"℃");
 
         return view;
     }

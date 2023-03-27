@@ -1,32 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="220dp"
     android:background="@android:color/transparent"
     android:orientation="vertical">
+
     <TextView
         android:id="@+id/current_temperature"
-        android:layout_marginTop="50dp"
-        android:textSize="100sp"
-        android:textColor="#fff"
-        android:layout_gravity="center"
+        android:paddingTop="10dp"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="130dp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="70sp" />
 
     <TextView
-        android:layout_marginTop="50dp"
         android:id="@+id/current_weather_text"
-        android:textSize="20sp"
-        android:textColor="#fff"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="50dp"
+        android:layout_below="@+id/current_temperature"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="20sp" />
+
     <TextView
         android:id="@+id/update_time"
-        android:textSize="15sp"
-        android:textColor="#fff"
-        android:layout_gravity="center"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"/>
+        android:layout_height="30dp"
+        android:layout_below="@+id/current_weather_text"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:textColor="#ffffff"
+        android:textSize="15sp" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -9,9 +9,9 @@ import androidx.annotation.Nullable;
 
 public class MyDBHelper extends SQLiteOpenHelper {
     public   String TAG="WeatherDemo";
-    public static final String CREATE_INFO="create table info(" +
+    public static final String CREATE_INFO="create table Info(" +
             "id integer primary key autoincrement," +
-            "city varchar(30) unique not null," +
+            "city varchar(30) not null unique ," +
             "content text not null)";
     private Context mContext;
     public MyDBHelper(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {

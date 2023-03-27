@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="6dp">
+    <androidx.cardview.widget.CardView
+        android:id="@+id/delete_city_cv"
+        android:layout_width="match_parent"
+        android:layout_height="130dp"
+        android:layout_margin="3dp"
+        app:contentPadding="10dp"
+        app:cardCornerRadius="10dp"
+        android:elevation="5dp">
+        <RelativeLayout
+            android:id="@+id/ic_card_item"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/ic_card_3">
+            <TextView
+                android:id="@+id/tv_delete_item_city"
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_height="70dp"
+                android:layout_marginTop="60dp"
+                android:text="西安"
+                android:textSize="24sp" />
+
+            <ImageView
+                android:id="@+id/im_delete"
+                android:layout_width="35dp"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginLeft="7dp"
+                android:src="@drawable/ic_delete" />
+
+            <ImageView
+                android:id="@+id/im_delete_left"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_alignParentLeft="true"
+                android:layout_centerInParent="true"
+                android:layout_marginLeft="7dp"
+                android:src="@drawable/ic_city_delete_left" />
+        </RelativeLayout>
+    </androidx.cardview.widget.CardView>
+
+</LinearLayout>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="10dp"
+    tools:context=".AddCityActivity">
+    <EditText
+        android:id="@+id/et_search"
+        android:layout_width="300dp"
+        android:layout_height="48dp"
+        android:hint="搜索城市"
+        android:background="@drawable/serachbg"
+        android:layout_alignParentLeft="true"/>
+    <ImageView
+        android:id="@+id/im_search"
+        android:src="@drawable/ic_search"
+        android:layout_toRightOf="@id/et_search"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="20dp"
+        android:layout_width="50dp"
+        android:layout_height="35dp"/>
+    <TextView
+        android:id="@+id/tv_city"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/et_search"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:text="热门城市"/>
+
+    <GridView
+        android:id="@+id/gv_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_city"
+        android:numColumns="3"/>
+
+</RelativeLayout>

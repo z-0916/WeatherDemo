@@ -27,4 +27,21 @@ public class WeatherFragmentAdapter  extends FragmentStatePagerAdapter {
     public int getCount() {
         return fragmentList.size();
     }
+    int childCount=0;
+
+    @Override
+    public void notifyDataSetChanged() {
+//        表示ViewPager包含的页数
+        this.childCount=getCount();
+        super.notifyDataSetChanged();
+    }
+
+   @Override
+    public int getItemPosition(@NonNull Object object) {
+        if (childCount>0){
+            childCount--;
+            return  POSITION_NONE;
+        }
+     return super.getItemPosition(object);
+    }
 }

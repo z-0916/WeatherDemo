@@ -1,4 +1,4 @@
-package com.example.weatheractivity;
+package com.example.weatheractivity.bean;
 
 public class CityItem {
     public String city;

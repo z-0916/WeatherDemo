@@ -17,19 +17,6 @@ public class Utility {
      * 将返回的城市数据解析成类
      */
 
-    public static CityResponse handleCityResponse(String response){
-        try {
-            JSONObject jsonObject=new JSONObject(response);
-            JSONArray jsonArray=jsonObject.getJSONArray("MyCity");
-            String cityContent=jsonArray.getJSONObject(0).toString();
-            Log.d(TAG,cityContent);
-            return  new Gson().fromJson(cityContent,CityResponse.class);
-        } catch (JSONException e) {
-            throw new RuntimeException(e);
-        }
-//        return  null;
-    }
-
     public  static Weather handleWeatherResponse(String response)  {
 //        JSONObject jsonObject=new JSONObject();
 //        JSONArray jsonArray= null;
@@ -40,5 +27,9 @@ public class Utility {
     public  static SevenWeather handleSevenWeatherResponse(String response)  {
 
         return  new Gson().fromJson(response,SevenWeather.class);
+    }
+    public  static CityResponse handleCityResponse(String response)  {
+
+        return  new Gson().fromJson(response,CityResponse.class);
     }
 }

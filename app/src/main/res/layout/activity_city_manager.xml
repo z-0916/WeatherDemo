@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f5f5f5"
     tools:context=".CityManagerActivity">
     <RelativeLayout
         android:id="@+id/city_top_title"
@@ -12,17 +13,45 @@
         android:layout_height="60dp">
         <ImageView
             android:id="@+id/im_back"
-            android:src="@mipmap/ic_add"
+            android:src="@drawable/ic_back"
+            android:scaleType="fitCenter"
             android:layout_alignParentLeft="true"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="8dp"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"/>
+        <ImageView
+            android:id="@+id/im_error"
+            android:visibility="gone"
+            android:src="@drawable/ic_error"
+            android:scaleType="fitCenter"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+
         <TextView
             android:id="@+id/city_title"
             android:text="城市管理"
             android:layout_centerInParent="true"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
+        <ImageView
+            android:id="@+id/im_edit_city"
+            android:src="@drawable/ic_edit_city"
+            android:scaleType="fitCenter"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
+        <ImageView
+            android:id="@+id/im_true"
+            android:src="@drawable/ic_true"
+            android:scaleType="fitCenter"
+            android:visibility="gone"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
     <ImageView
         android:id="@+id/city_line"
@@ -35,38 +64,40 @@
         android:layout_below="@id/city_line"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
+
     <androidx.cardview.widget.CardView
         android:layout_below="@+id/city_list_view"
-        android:background="#DAC9C9"
         android:id="@+id/city_card_add"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="130dp"
         android:layout_margin="3dp"
         app:contentPadding="10dp"
         app:cardCornerRadius="10dp"
         android:elevation="5dp">
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent"
+            android:background="#A6A3A3">
             <TextView
                 android:id="@+id/tv_item_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_centerInParent="true"
-                android:textSize="24sp"
-                android:text="+添加城市"/>
+                android:layout_centerHorizontal="true"
+                android:text="+添加城市"
+                android:layout_marginTop="20dp"
+                android:textColor="#901F7ADC"
+                android:textSize="24sp" />
+
             <TextView
                 android:id="@+id/tv_item_text"
+                android:layout_below="@id/tv_item_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_centerInParent="true"
-                android:textSize="18sp"
-                android:paddingTop="30dp"
-                android:paddingBottom="10dp"
-                android:layout_below="@+id/tv_item_add"
-                android:text="开启你的天气之旅"/>
+                android:padding="4dp"
+                android:layout_centerHorizontal="true"
+                android:layout_marginBottom="20dp"
+                android:text="开启你的天气之旅"
+                android:textSize="18sp" />
 
         </RelativeLayout>
 

@@ -1,5 +1,7 @@
 package com.example.weatheractivity.bean;
 
+import androidx.annotation.Nullable;
+
 public class CityWeatherBean {
     private int id;
     private String  city;
@@ -36,5 +38,18 @@ public class CityWeatherBean {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(this==obj){
+            return  true;
+        }
+        if (obj == null || getClass() != obj.getClass()) return false;
+        CityWeatherBean bean= (CityWeatherBean) obj;
+        if (id==bean.id){
+            return false;
+        }
+        return  city.equals(bean.city);
     }
 }

@@ -5,6 +5,7 @@ import androidx.cardview.widget.CardView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -18,7 +19,7 @@ import java.util.List;
 
 public class CityManagerActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ImageView backIV;
+    private ImageView backIV,editCityIm;
     private ListView myListView;
     private CardView addCityCard;
 //    显示列表数据源：数据库中存储的数据
@@ -33,10 +34,10 @@ public class CityManagerActivity extends AppCompatActivity implements View.OnCli
 //        添加点击事件
         backIV.setOnClickListener(this);
         addCityCard.setOnClickListener(this);
+        editCityIm.setOnClickListener(this);
         itemList=new ArrayList<>();
         cityManagerAdapter=new CityManagerAdapter(this,itemList);
         myListView.setAdapter(cityManagerAdapter);
-
     }
 
 //    获取数据库真实数据，添加到原有数据源中，提示适配器更新
@@ -54,6 +55,7 @@ public class CityManagerActivity extends AppCompatActivity implements View.OnCli
 
     private void bindView() {
         backIV=findViewById(R.id.im_back);
+        editCityIm=findViewById(R.id.im_edit_city);
         myListView=findViewById(R.id.city_list_view);
         addCityCard=findViewById(R.id.city_card_add);
     }
@@ -62,12 +64,15 @@ public class CityManagerActivity extends AppCompatActivity implements View.OnCli
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.im_back:
-//                finish();
-//                break;
-                Intent intent=new Intent(CityManagerActivity.this,MainActivity.class);
-                startActivity(intent);
+               finish();
+                break;
             case R.id.city_card_add:
-                intent=new Intent(CityManagerActivity.this,CitySelectedActivity.class);
+                Intent intent=new Intent(CityManagerActivity.this,AddCityActivity.class);
+                startActivity(intent);
+                finish();
+                break;
+            case R.id.im_edit_city:
+                intent=new Intent(CityManagerActivity.this,DeleteCityActivity.class);
                 startActivity(intent);
         }
     }
