@@ -1,6 +1,7 @@
 package com.example.weatheractivity;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -42,6 +44,7 @@ public class WeatherFragment  extends Fragment {
     private WeatherAdapter weatherAdapter;
     private  Context mContext;
     private ImageView imPosition;
+    private CoordinatorLayout mCoordinatorLayout;
     private TextView currentTemperature,updateTime, currentWeatherText,positionText;
     public String  city;
     public List<String> citySelected;
@@ -76,6 +79,7 @@ public class WeatherFragment  extends Fragment {
     }
 
     private void initView(View view) {
+        mCoordinatorLayout=view.findViewById(R.id.fragment_coordinatorLayout);
         imPosition=view.findViewById(R.id.im_fragment_position);
         positionText=view.findViewById(R.id.current_position);
         mRecycleView=view.findViewById(R.id.weather_recycle);
@@ -161,6 +165,8 @@ public class WeatherFragment  extends Fragment {
         Weather.NowBean nowBean= weather.getNow();
 //        顶部当前时间当前定位天气信息
         positionText.setText(city);
+        String text=weather.getNow().getText();
+        changeBg(text);
         currentTemperature.setText(weather.getNow().getTemperature()+"℃");
         currentWeatherText.setText(weather.getNow().getText());
         String time= FormatDate.updateTime(weather.getUpdateTime());
@@ -178,5 +184,19 @@ public class WeatherFragment  extends Fragment {
             Log.d(TAG,"展示七天数据结束");
         }
     }
-
+    private void changeBg(String text){
+        if (text.equals("晴")){
+            Drawable drawableSunny=getContext().getDrawable(R.drawable.ic_sunny_bg);
+            mCoordinatorLayout.setBackground(drawableSunny);
+        } else if (text.equals("多云")) {
+            Drawable drawableCloudy=getContext().getDrawable(R.drawable.ic_cloudy_bg);
+            mCoordinatorLayout.setBackground(drawableCloudy);
+        }else if (text.equals("阴")){
+            Drawable drawableYin=getContext().getDrawable(R.drawable.ic_yin_bg);
+            mCoordinatorLayout.setBackground(drawableYin);
+        }else{
+            Drawable drawableRainy=getContext().getDrawable(R.drawable.ic_rainy_bg);
+            mCoordinatorLayout.setBackground(drawableRainy);
+        }
+    }
 }

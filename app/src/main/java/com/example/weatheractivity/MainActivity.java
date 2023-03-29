@@ -128,11 +128,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 cityList.add(addCity);
                 fragmentList.clear();
                 initViewPager();
-//                WeatherFragment weatherFragment=new WeatherFragment();
-//                Bundle bundle=new Bundle();
-//                bundle.putString("city",addCity);
-//                weatherFragment.setArguments(bundle);
-//                fragmentList.add(weatherFragment);
                 myWfAdapter.notifyDataSetChanged();
             }
         };
